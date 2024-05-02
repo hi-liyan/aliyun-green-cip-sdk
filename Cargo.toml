@@ -1,0 +1,19 @@
+[package]
+name = "aliyun-green-cip-sdk"
+version = "0.1.0"
+edition = "2021"
+authors = ["Liyan 721748889@qq.com"]
+description = "Aliyun green cip sdk for rust."
+license = "MIT"
+documentation = "https://docs.rs/aliyun-green-cip-sdk"
+homepage = "https://docs.rs/aliyun-green-cip-sdk"
+repository = "https://github.com/hi-liyan/aliyun-green-cip-sdk"
+
+[dependencies]
+reqwest = { version = "0.12.4", features = ["json"] }
+url-escape = "0.1.1"
+serde = { version = "1.0.200", features = ["derive"] }
+struct-builder = { version = "0.1.1", git = "https://github.com/hi-liyan/struct-builder.git" }
+
+[dev-dependencies]
+tokio = { version = "1.37.0", features = ["full"] }
