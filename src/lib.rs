@@ -1,4 +1,4 @@
-pub mod green;
+pub mod client;
 mod utils;
 mod error;
 pub mod text_moderation;

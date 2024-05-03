@@ -1,8 +1,8 @@
 use reqwest::Method;
 use uuid::Uuid;
 
-use crate::error::MyError;
-use crate::green::GreenClient;
+use crate::error::{SdkError, TextModerationError};
+use crate::client::GreenClient;
 use crate::text_moderation::types::{ServiceParameters, TextModerationRequest, TextModerationResponse};
 use crate::utils::get_utc;
 
@@ -11,9 +11,16 @@ pub mod enums;
 
 impl GreenClient {
     /// 文本审核
-    pub async fn text_moderation(&self, req: TextModerationRequest) -> Result<TextModerationResponse, MyError> {
+    pub async fn text_moderation(&self, req: TextModerationRequest) -> Result<TextModerationResponse, SdkError> {
         let date = get_utc();
         let signature_nonce = Uuid::new_v4().to_string();
+
+        if req.service.is_none() {
+            return Err(SdkError::BadParams(TextModerationError::ServiceNotSet))
+        }
+        if req.content.is_none() {
+            return Err(SdkError::BadParams(TextModerationError::ContentNotSet))
+        }
 
         let service_params = ServiceParameters::builder()
             .content(req.content)

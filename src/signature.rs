@@ -1,6 +1,6 @@
 use base64::Engine;
 use base64::engine::general_purpose;
-use crate::green::GreenClient;
+use crate::client::GreenClient;
 use crate::utils::{generate_canonical_query_string, generate_string_to_sign, hmac_sha1};
 
 impl GreenClient {
