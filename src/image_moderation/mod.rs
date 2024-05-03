@@ -1,35 +1,37 @@
 use reqwest::Method;
 use uuid::Uuid;
 
-use crate::error::{SdkError, TextModerationError};
 use crate::client::GreenClient;
-use crate::text_moderation::types::{ServiceParameters, TextModerationRequest, TextModerationResponse};
+use crate::error::{ImageModerationError, SdkError};
+use crate::image_moderation::types::{ImageModerationRequest, ImageModerationResponse, ServiceParameters};
 use crate::utils::get_utc;
 
-pub mod types;
 pub mod enums;
+pub mod types;
 
 impl GreenClient {
-    /// 文本审核增强版API
-    ///
+    /// 图片审核增强版API
+    /// 
     /// 参考文档：
-    /// - https://help.aliyun.com/document_detail/434034.html?spm=a2c4g.433565.0.0.52e84298od57Bf
-    pub async fn text_moderation(&self, req: TextModerationRequest) -> Result<TextModerationResponse, SdkError> {
+    /// - https://help.aliyun.com/document_detail/467829.html?spm=a2c4g.434034.0.0.23813d12NZGIrI
+    pub async fn image_moderation(&self, req: ImageModerationRequest) -> Result<ImageModerationResponse, SdkError> {
         let date = get_utc();
         let signature_nonce = Uuid::new_v4().to_string();
 
         if req.service.is_none() {
-            return Err(SdkError::TextModerationError(TextModerationError::ServiceNotSet))
+            return Err(SdkError::ImageModerationError(ImageModerationError::ServiceNotSet))
         }
-        if req.content.is_none() {
-            return Err(SdkError::TextModerationError(TextModerationError::ContentNotSet))
+        if !(req.image_url.is_some() || (req.oss_bucket_name.is_some() && req.oss_object_name.is_some())) {
+            return Err(SdkError::ImageModerationError(ImageModerationError::ImageNotSet))
         }
 
         let service_params = ServiceParameters::builder()
-            .content(req.content)
-            .account_id(req.account_id)
-            .device_id(req.device_id)
-            .device_token(req.device_token)
+            .image_url(req.image_url)
+            .oss_bucket_name(req.oss_bucket_name)
+            .oss_object_name(req.oss_object_name)
+            .oss_region_id(req.oss_region_id)
+            .data_id(req.data_id)
+            .referer(req.referer)
             .build();
 
         let service_params = serde_json::to_string(&service_params).unwrap();
@@ -41,7 +43,7 @@ impl GreenClient {
             ("SignatureMethod", "Hmac-SHA1"),
             ("SignatureNonce", signature_nonce.as_str()),
             ("SignatureVersion", "1.0"),
-            ("Action", "TextModeration"),
+            ("Action", "ImageModeration"),
             ("AccessKeyId", self.access_key_id.as_str()),
             ("Timestamp", date.as_str()),
             ("Service", req.service.as_ref().unwrap().as_str()),

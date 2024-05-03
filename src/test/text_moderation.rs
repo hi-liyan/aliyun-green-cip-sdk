@@ -1,4 +1,4 @@
-use crate::green::{GreenClient, NetworkType, Region};
+use crate::client::{GreenClient, NetworkType, Region};
 use crate::text_moderation::enums::TextModerationService;
 use crate::text_moderation::types::TextModerationRequest;
 
