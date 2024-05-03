@@ -5,10 +5,8 @@ pub struct GreenClient {
     pub access_key_secret: String,
     /// 接入点（根据接入地域选择）
     pub endpoint: String,
-    /// 连接时超时时间，单位毫秒（ms）
-    pub connect_timeout: u32,
-    /// 读取时超时时间，单位毫秒（ms）。
-    pub read_timeout: u32,
+    /// 请求超时时间，单位毫秒（ms）
+    pub timeout: u64,
     /// reqwest 客户端
     pub client: Client
 }
@@ -20,8 +18,8 @@ impl GreenClient {
             access_key_secret: None,
             region: Region::Shanghai,
             network_type: NetworkType::Internal,
-            connect_timeout: 6000,
-            read_timeout: 3000,
+            timeout: 6000,
+            https: true,
             danger_accept_invalid_certs: false
         }
     }
@@ -32,8 +30,8 @@ pub struct GreenClientBuilder {
     access_key_secret: Option<String>,
     region: Region,
     network_type: NetworkType,
-    connect_timeout: u32,
-    read_timeout: u32,
+    timeout: u64,
+    https: bool,
     danger_accept_invalid_certs: bool
 }
 
@@ -58,13 +56,13 @@ impl GreenClientBuilder {
         self
     }
 
-    pub fn connect_timeout(mut self, connect_timeout: u32) -> Self {
-        self.connect_timeout = connect_timeout;
+    pub fn timeout(mut self, timeout: u64) -> Self {
+        self.timeout = timeout;
         self
     }
 
-    pub fn read_timeout(mut self, read_timeout: u32) -> Self {
-        self.read_timeout = read_timeout;
+    pub fn https(mut self, https: bool) -> Self {
+        self.https = https;
         self
     }
 
@@ -76,14 +74,13 @@ impl GreenClientBuilder {
     pub fn build(self) -> GreenClient {
         let access_key_id = self.access_key_id.expect("access_key_id is not set.");
         let access_key_secret = self.access_key_secret.expect("access_key_secret is not set.");
-        let endpoint = get_endpoint(&self.region, &self.network_type);
+        let endpoint = gen_endpoint(&self.region, &self.network_type, self.https);
 
         let green_cpi_client = GreenClient {
             access_key_id,
             access_key_secret,
             endpoint,
-            connect_timeout: self.connect_timeout,
-            read_timeout: self.read_timeout,
+            timeout: self.timeout,
             client: ClientBuilder::new()
                 .danger_accept_invalid_certs(self.danger_accept_invalid_certs)
                 .build()
@@ -114,7 +111,8 @@ pub enum Region {
     ApSoutheast
 }
 
-fn get_endpoint(region: &Region, network_type: &NetworkType) -> String {
+/// 生成 endpoint
+fn gen_endpoint(region: &Region, network_type: &NetworkType, https: bool) -> String {
     let network = match network_type {
         NetworkType::Internal => "green-cip-vpc",
         NetworkType::External => "green-cip"
@@ -129,6 +127,7 @@ fn get_endpoint(region: &Region, network_type: &NetworkType) -> String {
         Region::ApSoutheast => "ap-southeast"
     };
 
-    format!("http://{}.{}.aliyuncs.com", network, region)
+    let protocol = if https { "https" } else { "http" };
+    format!("{}://{}.{}.aliyuncs.com", protocol, network, region)
 }
 
