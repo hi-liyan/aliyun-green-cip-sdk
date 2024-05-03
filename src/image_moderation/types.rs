@@ -63,7 +63,7 @@ pub struct ImageModerationData {
     #[serde(rename = "DataId")]
     pub data_id: Option<String>,
     #[serde(rename = "Result")]
-    result: Option<Vec<ImageModerationDataResult>>
+    pub result: Option<Vec<ImageModerationDataResult>>
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

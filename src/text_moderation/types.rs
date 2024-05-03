@@ -31,7 +31,7 @@ pub struct TextModerationResponse {
     #[serde(rename = "Code")]
     pub code: Option<i32>,
     #[serde(rename = "Data")]
-    pub data: Option<ResponseData>,
+    pub data: Option<TextModerationResponseData>,
     #[serde(rename = "Message")]
     pub message: Option<String>,
     #[serde(rename = "RequestId")]
@@ -39,7 +39,7 @@ pub struct TextModerationResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ResponseData {
+pub struct TextModerationResponseData {
     #[serde(rename = "labels")]
     pub labels: Option<String>,
     #[serde(rename = "reason")]
