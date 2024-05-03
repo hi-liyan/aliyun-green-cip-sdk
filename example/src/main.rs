@@ -12,7 +12,7 @@ async fn main() {
         .network_type(NetworkType::External)
         .https(true)
         .build();
-    
+
     text_scan(&client).await;
 }
 

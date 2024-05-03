@@ -2,14 +2,6 @@ use serde::{Deserialize, Serialize};
 use struct_builder::Builder;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
-pub struct RequestParams {
-    #[serde(rename = "Service")]
-    service: Option<String>,
-    #[serde(rename = "ServiceParameters")]
-    service_parameters: Option<ServiceParameters>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Builder)]
 pub struct ServiceParameters {
     /// 审核的文本内容，限定在600字符以内。
     #[serde(rename = "content")]

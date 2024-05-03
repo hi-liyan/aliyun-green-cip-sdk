@@ -1,14 +1,6 @@
 use serde::{Deserialize, Serialize};
 use struct_builder::Builder;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RequestParams {
-    #[serde(rename = "Service")]
-    service: Option<String>,
-    #[serde(rename = "ServiceParameters")]
-    service_parameters: Option<ServiceParameters>,
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
 pub struct ServiceParameters {
     /// 待检测对象的URL，请确保该URL能通过公网访问到，且URL地址长度不超过2048个字符。
