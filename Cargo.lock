@@ -24,13 +24,13 @@ dependencies = [
  "base64",
  "chrono",
  "hmac",
+ "percent-encoding",
  "reqwest",
  "serde",
  "serde_json",
  "sha1",
  "struct-builder",
  "thiserror",
- "url",
  "uuid",
 ]
 

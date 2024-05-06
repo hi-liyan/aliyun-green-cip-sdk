@@ -20,4 +20,4 @@ chrono = "0.4.38"
 uuid = { version = "1.8.0", features = ["v4"] }
 sha1 = "0.10.6"
 hmac = "0.12.1"
-url = "2.5.0"
+percent-encoding = "2.3.1"

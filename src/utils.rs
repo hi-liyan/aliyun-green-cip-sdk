@@ -1,7 +1,7 @@
 use chrono::Utc;
 use hmac::{Hmac, Mac};
+use percent_encoding::{percent_encode, AsciiSet, CONTROLS};
 use sha1::Sha1;
-use url::form_urlencoded;
 
 /// 获取 UTC 时间
 pub fn get_utc() -> String {
@@ -18,9 +18,40 @@ pub fn hmac_sha1(key: &[u8], message: &[u8]) -> Vec<u8> {
     hmac.finalize().into_bytes().to_vec()
 }
 
+pub const DEFAULT_ENCODING_SET: &AsciiSet = &CONTROLS
+    .add(b' ')
+    .add(b'!')
+    .add(b'"')
+    .add(b'#')
+    .add(b'$')
+    .add(b'%')
+    .add(b'&')
+    .add(b'\'')
+    .add(b'(')
+    .add(b')')
+    .add(b'*')
+    .add(b'+')
+    .add(b',')
+    .add(b'/')
+    .add(b':')
+    .add(b';')
+    .add(b'<')
+    .add(b'=')
+    .add(b'>')
+    .add(b'?')
+    .add(b'@')
+    .add(b'[')
+    .add(b'\\')
+    .add(b']')
+    .add(b'^')
+    .add(b'`')
+    .add(b'{')
+    .add(b'|')
+    .add(b'}');
+
 /// URL 编码
 fn encode_param(param: &str) -> String {
-    form_urlencoded::byte_serialize(param.as_bytes()).collect::<String>()
+    percent_encode(param.as_bytes(), DEFAULT_ENCODING_SET).collect::<String>()
 }
 
 /// 生成 Canonical Query String
